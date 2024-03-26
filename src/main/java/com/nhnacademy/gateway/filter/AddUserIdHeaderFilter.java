@@ -3,6 +3,7 @@ package com.nhnacademy.gateway.filter;
 import com.nhnacademy.gateway.properties.ExcludePathProperties;
 import com.nhnacademy.gateway.properties.JwtProperties;
 import com.nhnacademy.gateway.utils.JwtProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.Ordered;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @Component
 public class AddUserIdHeaderFilter extends AbstractGatewayFilterFactory<AddUserIdHeaderFilter.Config> implements Ordered {
     private final JwtProperties jwtProperties;
@@ -31,6 +33,7 @@ public class AddUserIdHeaderFilter extends AbstractGatewayFilterFactory<AddUserI
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
+            log.debug("add user id header filter");
             ServerHttpRequest request = exchange.getRequest();
             URI uri = request.getURI();
 
