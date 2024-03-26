@@ -6,11 +6,13 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
 @RequiredArgsConstructor
+@Component
 public class UserAdaptor {
     private static final String X_USER_ID = "X-USER-ID";
     private final RestTemplate restTemplate;

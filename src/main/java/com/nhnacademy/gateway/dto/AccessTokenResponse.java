@@ -10,4 +10,8 @@ public class AccessTokenResponse {
     private String accessToken;
     private String tokenType;
     private Integer expiresIn;
+
+    public String toHeader(){
+        return tokenType + " " + accessToken;
+    }
 }
