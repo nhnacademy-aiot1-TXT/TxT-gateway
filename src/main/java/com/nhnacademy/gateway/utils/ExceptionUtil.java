@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class ExceptionUtil {
-    private Mono<Void> exceptionHandler(ServerWebExchange exchange, String message) {
+    public Mono<Void> exceptionHandler(ServerWebExchange exchange, String message) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
 
