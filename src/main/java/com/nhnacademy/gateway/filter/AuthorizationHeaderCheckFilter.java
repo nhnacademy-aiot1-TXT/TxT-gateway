@@ -21,6 +21,7 @@ public class AuthorizationHeaderCheckFilter extends AbstractGatewayFilterFactory
     private final List<String> excludePathList;
 
     public AuthorizationHeaderCheckFilter(ExceptionUtil exceptionUtil, ExcludePathProperties excludePathProperties) {
+        super(Config.class);
         this.exceptionUtil = exceptionUtil;
         this.excludePathList = List.of(excludePathProperties.getPath().split(","));
     }
