@@ -20,6 +20,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+/**
+ * jwt token 검증 작업을 하는 필터
+ *
+ * @author parksangwon
+ * @version 1.0
+ */
 @Slf4j
 @Component
 public class VerificationTokenFilter extends AbstractGatewayFilterFactory<VerificationTokenFilter.Config> implements Ordered {
@@ -33,6 +39,16 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
     private final UserAdaptor userAdaptor;
     private final List<String> excludePathList;
 
+    /**
+     * filter에 필요한 객체를 주입받기 위한 생성자
+     *
+     * @param jwtProvider jwt 관련 작업을 처리하기 위한 객체
+     * @param jwtProperties jwt 관련 정보를 가지고 있는 객체
+     * @param redisUtil redis 관련 작업을 처리하기 위한 객체
+     * @param userAdaptor 재발급 관련 작업을 처리하기 위한 객체
+     * @param exceptionUtil 예외 관련 작업을 처리하기 위한 객체
+     * @param excludePathProperties filter를 적용하지 않는 path를 가지고 있는 객체
+     */
     public VerificationTokenFilter(
             JwtProvider jwtProvider,
             JwtProperties jwtProperties,
@@ -53,6 +69,14 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
     public static class Config {
     }
 
+    /**
+     * filter를 적용하지 않는 path를 무시하고,
+     * 요청의 Authorization 헤더에서 accessToken을 추출하고,
+     * redisUtil을 통해 logout을 한 유저인지 확인하고,
+     * jwt token 검증을 통해 통과시키거나 재발급을 하거나 예외처리를 하는 메서드
+     *
+     * @return filter 로직이 담긴 람다식
+     */
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
@@ -99,6 +123,15 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
         };
     }
 
+    /**
+     * refresh token에서 userId를 추출하고,
+     * userAdaptor를 통해 인증서버에 재발급을 요청하여 access token을 받고,
+     * 요청의 Authorization 헤더에 새로운 access token을 넣어주는 메서드
+     *
+     * @param exchange request를 가져오기 위해 사용되는 객체
+     * @param refreshToken refresh token 문자열
+     * @return 재발급 된 access token이 담긴 dto
+     */
     private AccessTokenResponse reissueToken(ServerWebExchange exchange, String refreshToken) {
         String refreshUserId = jwtProvider.getUserId(refreshToken);
         AccessTokenResponse accessTokenResponse = userAdaptor.reissueToken(refreshUserId, refreshToken);
@@ -108,6 +141,11 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
     }
 
 
+    /**
+     * filter의 순서를 정하기 위한 메서드
+     *
+     * @return 순서를 나타내는 정수
+     */
     @Override
     public int getOrder() {
         return 1;
