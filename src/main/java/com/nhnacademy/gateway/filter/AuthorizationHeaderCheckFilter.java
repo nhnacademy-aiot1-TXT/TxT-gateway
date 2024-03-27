@@ -20,7 +20,10 @@ public class AuthorizationHeaderCheckFilter extends AbstractGatewayFilterFactory
     private final ExceptionUtil exceptionUtil;
     private final List<String> excludePathList;
 
-    public AuthorizationHeaderCheckFilter(ExceptionUtil exceptionUtil, ExcludePathProperties excludePathProperties) {
+    public AuthorizationHeaderCheckFilter(
+            ExceptionUtil exceptionUtil,
+            ExcludePathProperties excludePathProperties
+    ) {
         super(Config.class);
         this.exceptionUtil = exceptionUtil;
         this.excludePathList = List.of(excludePathProperties.getPath().split(","));
@@ -41,7 +44,7 @@ public class AuthorizationHeaderCheckFilter extends AbstractGatewayFilterFactory
             }
 
             if (Objects.isNull(request.getHeaders().get(HttpHeaders.AUTHORIZATION)) ||
-                !request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                    !request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 return exceptionUtil.exceptionHandler(exchange, "not exist authorization header");
             }
 
