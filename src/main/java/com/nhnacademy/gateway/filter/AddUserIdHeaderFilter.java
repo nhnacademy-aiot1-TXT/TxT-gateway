@@ -16,6 +16,8 @@ import java.util.List;
 @Slf4j
 @Component
 public class AddUserIdHeaderFilter extends AbstractGatewayFilterFactory<AddUserIdHeaderFilter.Config> implements Ordered {
+    private static final String SPLIT_STRING = ",";
+    private static final String X_USER_ID = "X-USER-ID";
     private final JwtProperties jwtProperties;
     private final JwtProvider jwtProvider;
     private final List<String> excludePathList;
@@ -28,7 +30,7 @@ public class AddUserIdHeaderFilter extends AbstractGatewayFilterFactory<AddUserI
         super(Config.class);
         this.jwtProperties = jwtProperties;
         this.jwtProvider = jwtProvider;
-        this.excludePathList = List.of(excludePathProperties.getPath().split(","));
+        this.excludePathList = List.of(excludePathProperties.getPath().split(SPLIT_STRING));
     }
 
     public static class Config {
@@ -52,7 +54,7 @@ public class AddUserIdHeaderFilter extends AbstractGatewayFilterFactory<AddUserI
             String userId = jwtProvider.getUserId(accessToken);
 
             exchange.mutate()
-                    .request(builder -> builder.header("X-USER-ID", userId));
+                    .request(builder -> builder.header(X_USER_ID, userId));
 
             return chain.filter(exchange);
         };

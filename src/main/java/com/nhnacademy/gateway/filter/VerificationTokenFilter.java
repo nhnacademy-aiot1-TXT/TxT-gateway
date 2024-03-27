@@ -8,6 +8,7 @@ import com.nhnacademy.gateway.utils.ExceptionUtil;
 import com.nhnacademy.gateway.utils.JwtProvider;
 import com.nhnacademy.gateway.utils.JwtStatus;
 import com.nhnacademy.gateway.utils.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.Ordered;
@@ -19,10 +20,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+@Slf4j
 @Component
 public class VerificationTokenFilter extends AbstractGatewayFilterFactory<VerificationTokenFilter.Config> implements Ordered {
     private static final String AUTHORIZATION = "Authorization";
     private static final String REFRESH_TOKEN = "Refresh-Token";
+    private static final String SPLIT_STRING = ",";
     private final JwtProvider jwtProvider;
     private final JwtProperties jwtProperties;
     private final RedisUtil redisUtil;
@@ -44,7 +47,7 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
         this.redisUtil = redisUtil;
         this.exceptionUtil = exceptionUtil;
         this.userAdaptor = userAdaptor;
-        this.excludePathList = List.of(excludePathProperties.getPath().split(","));
+        this.excludePathList = List.of(excludePathProperties.getPath().split(SPLIT_STRING));
     }
 
     public static class Config {
@@ -53,6 +56,7 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
+            log.debug("verification token filter");
             ServerHttpRequest request = exchange.getRequest();
             if (excludePathList.contains(request.getURI().getPath())) {
                 return chain.filter(exchange);
