@@ -2,6 +2,9 @@ spring:
   application:
     name: gateway
 
+  main:
+    web-application-type: reactive
+
 server:
   port: 8000
 
@@ -10,7 +13,7 @@ jwt:
   token-prefix: Bearer
 filter:
   exclude:
-    path: /api/auth/login,/api/auth/signup
+    path: /api/auth/login,/api/user/register
 
 eureka:
   client:
