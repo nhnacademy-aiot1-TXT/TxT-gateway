@@ -20,7 +20,11 @@ public class AddUserIdHeaderFilter extends AbstractGatewayFilterFactory<AddUserI
     private final JwtProvider jwtProvider;
     private final List<String> excludePathList;
 
-    public AddUserIdHeaderFilter(JwtProperties jwtProperties, JwtProvider jwtProvider, ExcludePathProperties excludePathProperties) {
+    public AddUserIdHeaderFilter(
+            JwtProperties jwtProperties,
+            JwtProvider jwtProvider,
+            ExcludePathProperties excludePathProperties
+    ) {
         super(Config.class);
         this.jwtProperties = jwtProperties;
         this.jwtProvider = jwtProvider;
