@@ -17,6 +17,7 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class AuthorizationHeaderCheckFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderCheckFilter.Config> implements Ordered {
+    private static final String SPLIT_STRING = ",";
     private final ExceptionUtil exceptionUtil;
     private final List<String> excludePathList;
 
@@ -26,7 +27,7 @@ public class AuthorizationHeaderCheckFilter extends AbstractGatewayFilterFactory
     ) {
         super(Config.class);
         this.exceptionUtil = exceptionUtil;
-        this.excludePathList = List.of(excludePathProperties.getPath().split(","));
+        this.excludePathList = List.of(excludePathProperties.getPath().split(SPLIT_STRING));
     }
 
     public static class Config {
