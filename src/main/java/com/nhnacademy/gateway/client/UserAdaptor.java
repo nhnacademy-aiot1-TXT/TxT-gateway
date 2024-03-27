@@ -11,8 +11,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class UserAdaptor {
     private static final String X_USER_ID = "X-USER-ID";
     private final RestTemplate restTemplate;
