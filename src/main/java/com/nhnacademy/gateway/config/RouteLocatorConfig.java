@@ -38,12 +38,12 @@ public class RouteLocatorConfig {
                                                       .filters(f -> f.filter(authorizationHeaderCheckFilter.apply(new AuthorizationHeaderCheckFilter.Config()))
                                                                      .filter(verificationTokenFilter.apply(new VerificationTokenFilter.Config()))
                                                                      .filter(addUserIdHeaderFilter.apply(new AddUserIdHeaderFilter.Config())))
-                                                      .uri("http://USER-MANAGEMENT"))
+                                                      .uri("lb://USER-MANAGEMENT"))
                       .route("authorization-server", p -> p.path("/api/auth/**")
                                                            .filters(f -> f.filter(authorizationHeaderCheckFilter.apply(new AuthorizationHeaderCheckFilter.Config()))
                                                                           .filter(verificationTokenFilter.apply(new VerificationTokenFilter.Config()))
                                                                           .filter(addUserIdHeaderFilter.apply(new AddUserIdHeaderFilter.Config())))
-                                                           .uri("http://AUTHORIZATION-SERVER"))
+                                                           .uri("lb://AUTHORIZATION-SERVER"))
                       .build();
     }
 }
