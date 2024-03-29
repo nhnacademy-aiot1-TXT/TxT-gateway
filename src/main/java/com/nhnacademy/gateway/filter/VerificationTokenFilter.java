@@ -1,7 +1,5 @@
 package com.nhnacademy.gateway.filter;
 
-import com.nhnacademy.gateway.client.UserAdaptor;
-import com.nhnacademy.gateway.dto.AccessTokenResponse;
 import com.nhnacademy.gateway.properties.ExcludePathProperties;
 import com.nhnacademy.gateway.properties.JwtProperties;
 import com.nhnacademy.gateway.utils.ExceptionUtil;
@@ -12,11 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -36,33 +32,28 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
     private final JwtProperties jwtProperties;
     private final RedisUtil redisUtil;
     private final ExceptionUtil exceptionUtil;
-    private final UserAdaptor userAdaptor;
     private final List<String> excludePathList;
 
     /**
      * filter에 필요한 객체를 주입받기 위한 생성자
      *
-     * @param jwtProvider jwt 관련 작업을 처리하기 위한 객체
-     * @param jwtProperties jwt 관련 정보를 가지고 있는 객체
-     * @param redisUtil redis 관련 작업을 처리하기 위한 객체
-     * @param userAdaptor 재발급 관련 작업을 처리하기 위한 객체
-     * @param exceptionUtil 예외 관련 작업을 처리하기 위한 객체
+     * @param jwtProvider           jwt 관련 작업을 처리하기 위한 객체
+     * @param jwtProperties         jwt 관련 정보를 가지고 있는 객체
+     * @param redisUtil             redis 관련 작업을 처리하기 위한 객체
+     * @param exceptionUtil         예외 관련 작업을 처리하기 위한 객체
      * @param excludePathProperties filter를 적용하지 않는 path를 가지고 있는 객체
      */
     public VerificationTokenFilter(
             JwtProvider jwtProvider,
             JwtProperties jwtProperties,
             RedisUtil redisUtil,
-            UserAdaptor userAdaptor,
             ExceptionUtil exceptionUtil,
-            ExcludePathProperties excludePathProperties
-    ) {
+            ExcludePathProperties excludePathProperties) {
         super(Config.class);
         this.jwtProvider = jwtProvider;
         this.jwtProperties = jwtProperties;
         this.redisUtil = redisUtil;
         this.exceptionUtil = exceptionUtil;
-        this.userAdaptor = userAdaptor;
         this.excludePathList = List.of(excludePathProperties.getPath().split(SPLIT_STRING));
     }
 
@@ -87,10 +78,10 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
             }
 
             String accessToken = jwtProvider.extractAuthorizationHeader(request)
-                    .replace(jwtProperties.getTokenPrefix(), "")
-                    .trim();
+                                            .replace(jwtProperties.getTokenPrefix(), "")
+                                            .trim();
             if (redisUtil.hasKey(accessToken)) {
-                return exceptionUtil.exceptionHandler(exchange, "user already logout");
+                return exceptionUtil.exceptionHandler(exchange, HttpStatus.UNAUTHORIZED,"user already logout");
             }
 
             JwtStatus status = jwtProvider.validateToken(accessToken);
@@ -98,48 +89,15 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
                 case ACCESS:
                     break;
                 case EXPIRED:
-                    String refreshToken = request
-                            .getHeaders()
-                            .getFirst(REFRESH_TOKEN);
-
-                    if (!jwtProvider.validateToken(refreshToken).equals(JwtStatus.ACCESS)) {
-                        return exceptionUtil.exceptionHandler(exchange, "refresh token not valid");
-                    }
-
-                    AccessTokenResponse accessTokenResponse = reissueToken(exchange, refreshToken);
-
-                    ServerHttpResponse response = exchange.getResponse();
-                    response.beforeCommit(() -> {
-                        response.getHeaders().set(AUTHORIZATION, accessTokenResponse.toHeader());
-                        return Mono.empty();
-                    });
-                    break;
+                    return exceptionUtil.exceptionHandler(exchange, HttpStatus.UNAUTHORIZED,"access token expired");
                 case INVALID:
-                    return exceptionUtil.exceptionHandler(exchange, "access token not valid");
+                    return exceptionUtil.exceptionHandler(exchange, HttpStatus.BAD_REQUEST,"access token not valid");
 
             }
 
             return chain.filter(exchange);
         };
     }
-
-    /**
-     * refresh token에서 userId를 추출하고,
-     * userAdaptor를 통해 인증서버에 재발급을 요청하여 access token을 받고,
-     * 요청의 Authorization 헤더에 새로운 access token을 넣어주는 메서드
-     *
-     * @param exchange request를 가져오기 위해 사용되는 객체
-     * @param refreshToken refresh token 문자열
-     * @return 재발급 된 access token이 담긴 dto
-     */
-    private AccessTokenResponse reissueToken(ServerWebExchange exchange, String refreshToken) {
-        String refreshUserId = jwtProvider.getUserId(refreshToken);
-        AccessTokenResponse accessTokenResponse = userAdaptor.reissueToken(refreshUserId, refreshToken);
-
-        exchange.mutate().request(builder -> builder.header(AUTHORIZATION, accessTokenResponse.toHeader()));
-        return accessTokenResponse;
-    }
-
 
     /**
      * filter의 순서를 정하기 위한 메서드
