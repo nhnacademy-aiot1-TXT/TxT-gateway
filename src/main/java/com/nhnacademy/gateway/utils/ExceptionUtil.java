@@ -23,11 +23,11 @@ public class ExceptionUtil {
      * @param message 예외가 발생된 이유를 출력 하기 위한 문자열
      * @return 변경한 response를 Mono 객체 형태로 응답
      */
-    public Mono<Void> exceptionHandler(ServerWebExchange exchange, String message) {
+    public Mono<Void> exceptionHandler(ServerWebExchange exchange, HttpStatus status, String message) {
         log.debug("exception message: {}", message);
 
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        response.setStatusCode(status);
 
         return response.setComplete();
     }

@@ -7,6 +7,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
@@ -65,12 +66,14 @@ public class AuthorizationHeaderCheckFilter extends AbstractGatewayFilterFactory
 
             if (Objects.isNull(request.getHeaders().get(HttpHeaders.AUTHORIZATION)) ||
                     !request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return exceptionUtil.exceptionHandler(exchange, "not exist authorization header");
+                return exceptionUtil.exceptionHandler(exchange, HttpStatus.UNAUTHORIZED ,"not exist authorization header");
             }
 
             return chain.filter(exchange);
         };
     }
+
+
 
     /**
      * filter의 순서를 정하기 위한 메서드
