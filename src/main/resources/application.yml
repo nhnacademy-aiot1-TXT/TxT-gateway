@@ -13,7 +13,7 @@ jwt:
   token-prefix: Bearer
 filter:
   exclude:
-    path: /api/auth/login,/api/user/register
+    path: /api/auth/login,/api/user/register,/api/auth/reissue
 
 eureka:
   client:
