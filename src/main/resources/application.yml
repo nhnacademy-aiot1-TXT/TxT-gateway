@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: gateway
+
+  main:
+    web-application-type: reactive
+
+server:
+  port: 8000
+
+jwt:
+  secret: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvp2rIum8ZCFGaWp06klve94eVEg+n1vfuk6lmeeUfoW7ek5lueK+jgN6CDNccaWOdQVuBw+VAAv3oQ61UE+sO+63MOVIQG/+ZxBtBvuiyiPP1viUt97tHB5uqgn9edhoQWQsyaYbAGBjQgant4PlCyDoYNlog0EbasXzi0xNYPMVoH9HUcqs2QRDtcRDKuSKVZIGo2ic9HzOsp+wiEfVt21YP8TXkZNjjc4J1y/DcJkW4tiQv+giJ6eeFgpLjyTy++FT51iQoeQMpvtofzwqUTXi7faj/DRJ2/PmlLSqE+H9e2alJYPPBTF6V3p9wdV+YQiLTfmTjV7NS/37ZVk6PwIDAQAB
+  token-prefix: Bearer
+filter:
+  exclude:
+    path: /api/auth/login,/api/user/register,/api/auth/reissue,/api/auth/logout
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://admin:1234@localhost:8761/eureka,http://admin:1234@localhost:8762/eureka
+  instance:
+    prefer-ip-address: true
