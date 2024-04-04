@@ -67,7 +67,7 @@ public class JwtProvider {
      * @param token token 문자열
      * @return claim들로 구성된 객체
      */
-    private Claims getClaims(String token) {
+    public Claims getClaims(String token) {
         return jwtParser
                 .parseClaimsJws(token)
                 .getBody();
