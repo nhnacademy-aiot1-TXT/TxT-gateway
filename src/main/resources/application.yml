@@ -11,6 +11,21 @@ spring:
     password: '*N2vya7H@muDTwdNMR!'
     database: 10
 
+  profiles:
+    active: prod
+
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:8080/"
+            allow-credentials: true
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+
 server:
   port: 8000
 
