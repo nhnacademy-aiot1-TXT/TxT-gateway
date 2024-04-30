@@ -20,7 +20,8 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins:
-              - "http://localhost:8080/"
+              - "http://180.210.80.73:8080/"
+              - "http://133.186.209.183:8080/"
             allow-credentials: true
             allowedHeaders: "*"
             allowedMethods:
