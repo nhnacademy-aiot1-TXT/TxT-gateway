@@ -54,6 +54,8 @@ public class RouteLocatorConfig {
                                 .filter(addUserIdHeaderFilter.apply(new AddUserIdHeaderFilter.Config()))
                                 .filter(authorizationCheckFilter.apply(new AuthorizationCheckFilter.Config())))
                         .uri("lb://SENSOR-DATA"))
+                .route("OAuth2", p -> p.path("/oauth2/authorization/google")
+                        .uri("lb://USER-MANAGEMENT"))
                 .build();
 
     }
