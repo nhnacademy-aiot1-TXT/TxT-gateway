@@ -60,7 +60,7 @@ public class RouteLocatorConfig {
                                 .filter(addUserIdHeaderFilter.apply(new AddUserIdHeaderFilter.Config()))
                                 .filter(authorizationCheckFilter.apply(new AuthorizationCheckFilter.Config())))
                         .uri("lb://COMMON-API"))
-                .route("OAuth2", p -> p.path("/oauth2/authorization/google")
+                .route("OAuth2", p -> p.path("/oauth2/authorization/google", "/login/oauth2/code")
                         .uri("lb://USER-MANAGEMENT"))
                 .build();
 
