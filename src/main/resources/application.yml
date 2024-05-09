@@ -12,19 +12,7 @@ spring:
     database: 10
 
   profiles:
-    active: prod
-
-  cloud:
-    gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins:
-              - "https://contxt.co.kr"
-            allow-credentials: true
-            allowedHeaders: "*"
-            allowedMethods:
-              - GET
+    active: dev
 
 server:
   port: 8000
@@ -34,7 +22,7 @@ jwt:
   token-prefix: Bearer
 filter:
   exclude:
-    path: /api/auth/login,/api/user/register,/api/auth/reissue,/api/auth/logout
+    path: /api/auth/login,/api/user/register,/api/auth/reissue,/api/auth/logout, /oauth2/authorization/google, /oauth2/authorization/github
 
 eureka:
   client:
