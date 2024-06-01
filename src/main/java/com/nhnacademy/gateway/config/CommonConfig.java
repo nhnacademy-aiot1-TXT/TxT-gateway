@@ -38,6 +38,12 @@ public class CommonConfig {
                 .build();
     }
 
+    /**
+     * RSA 공개키 생성 빈 등록 메서드
+     *
+     * @param jwtProperties jwt 설정 값
+     * @return 복혹화된 public key
+     */
     @Bean
     public PublicKey getPublicKeyDecryption(JwtProperties jwtProperties) {
         try {
