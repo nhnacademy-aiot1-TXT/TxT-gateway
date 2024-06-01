@@ -54,7 +54,20 @@ public class RouteLocatorConfig {
                                 .filter(addUserIdHeaderFilter.apply(new AddUserIdHeaderFilter.Config()))
                                 .filter(authorizationCheckFilter.apply(new AuthorizationCheckFilter.Config())))
                         .uri("lb://SENSOR-DATA"))
+                .route("common-api", p -> p.path("/api/common/**")
+                        .filters(f -> f.filter(authorizationHeaderCheckFilter.apply(new AuthorizationHeaderCheckFilter.Config()))
+                                .filter(verificationTokenFilter.apply(new VerificationTokenFilter.Config()))
+                                .filter(addUserIdHeaderFilter.apply(new AddUserIdHeaderFilter.Config()))
+                                .filter(authorizationCheckFilter.apply(new AuthorizationCheckFilter.Config())))
+                        .uri("lb://COMMON-API"))
+                .route("rule-engine", p -> p.path("/api/rule/**")
+                        .filters(f -> f.filter(authorizationHeaderCheckFilter.apply(new AuthorizationHeaderCheckFilter.Config()))
+                                .filter(verificationTokenFilter.apply(new VerificationTokenFilter.Config()))
+                                .filter(addUserIdHeaderFilter.apply(new AddUserIdHeaderFilter.Config()))
+                                .filter(authorizationCheckFilter.apply(new AuthorizationCheckFilter.Config())))
+                        .uri("lb://RULE-ENGINE"))
+                .route("OAuth2", p -> p.path("/oauth2/authorization/**", "/login/oauth2/code/**")
+                        .uri("lb://USER-MANAGEMENT"))
                 .build();
-
     }
 }

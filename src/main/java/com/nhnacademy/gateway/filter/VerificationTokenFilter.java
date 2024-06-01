@@ -25,8 +25,6 @@ import java.util.List;
 @Slf4j
 @Component
 public class VerificationTokenFilter extends AbstractGatewayFilterFactory<VerificationTokenFilter.Config> implements Ordered {
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String REFRESH_TOKEN = "Refresh-Token";
     private static final String SPLIT_STRING = ",";
     private final JwtProvider jwtProvider;
     private final JwtProperties jwtProperties;
@@ -78,10 +76,10 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
             }
 
             String accessToken = jwtProvider.extractAuthorizationHeader(request)
-                                            .replace(jwtProperties.getTokenPrefix(), "")
-                                            .trim();
+                    .replace(jwtProperties.getTokenPrefix(), "")
+                    .trim();
             if (redisUtil.hasKey(accessToken)) {
-                return exceptionUtil.exceptionHandler(exchange, HttpStatus.UNAUTHORIZED,"user already logout");
+                return exceptionUtil.exceptionHandler(exchange, HttpStatus.UNAUTHORIZED, "user already logout");
             }
 
             JwtStatus status = jwtProvider.validateToken(accessToken);
@@ -89,9 +87,9 @@ public class VerificationTokenFilter extends AbstractGatewayFilterFactory<Verifi
                 case ACCESS:
                     break;
                 case EXPIRED:
-                    return exceptionUtil.exceptionHandler(exchange, HttpStatus.UNAUTHORIZED,"access token expired");
+                    return exceptionUtil.exceptionHandler(exchange, HttpStatus.UNAUTHORIZED, "access token expired");
                 case INVALID:
-                    return exceptionUtil.exceptionHandler(exchange, HttpStatus.BAD_REQUEST,"access token not valid");
+                    return exceptionUtil.exceptionHandler(exchange, HttpStatus.BAD_REQUEST, "access token not valid");
 
             }
 

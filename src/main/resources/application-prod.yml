@@ -1,0 +1,4 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:1234@133.186.220.58:8761/eureka

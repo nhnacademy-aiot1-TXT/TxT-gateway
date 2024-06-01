@@ -11,6 +11,9 @@ spring:
     password: '*N2vya7H@muDTwdNMR!'
     database: 10
 
+  profiles:
+    active: prod
+
 server:
   port: 8000
 
@@ -19,15 +22,21 @@ jwt:
   token-prefix: Bearer
 filter:
   exclude:
-    path: /api/auth/login,/api/user/register,/api/auth/reissue,/api/auth/logout
+    path: /api/auth/login,/api/user/register,/api/auth/reissue,/api/auth/logout, /oauth2/authorization/google, /oauth2/authorization/github
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
-    service-url:
-      defaultZone: http://admin:1234@133.186.220.58:8761/eureka,http://admin:1234@133.186.220.58:8762/eureka
   instance:
     prefer-ip-address: true
 
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: beans, conditions, configprops, env, health, httpexchanges, info, loggers, metrics, mappings, threaddump, shutdown
+      base-path: /gateway-server/manage
+  endpoint:
+    health:
+      show-details: always
