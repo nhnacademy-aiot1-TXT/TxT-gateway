@@ -64,3 +64,4 @@ jobs:
             docker rm -f $(docker ps -q -f "name=TxT-gateway")
             docker pull ${{ secrets.DOCKER_REPO }}
             docker run -d -p 8000:8000 --name TxT-gateway ${{ secrets.DOCKER_REPO }}
+            docker rmi $(docker images ${{ secrets.DOCKER_REPO }} -q)
