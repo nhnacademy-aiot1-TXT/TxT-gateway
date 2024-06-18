@@ -6,10 +6,10 @@ spring:
     web-application-type: reactive
 
   redis:
-    host: 133.186.244.96
-    port: 6379
+    host: 133.186.241.167
     password: '*N2vya7H@muDTwdNMR!'
-    database: 10
+    port: 6379
+    database: 260
 
   profiles:
     active: prod
