@@ -28,8 +28,6 @@ eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
-  instance:
-    prefer-ip-address: true
 
 management:
   endpoints:
