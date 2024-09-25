@@ -1,6 +1,6 @@
 eureka:
   instance:
-    hostname: 133.186.215.12
+    hostname: 146.56.98.218
   client:
     service-url:
-      defaultZone: http://admin:1234@133.186.215.12:8761/eureka
+      defaultZone: http://admin:1234@146.56.98.218:8761/eureka
